@@ -7,6 +7,6 @@ data class CityData(
     val lon: Double,
 ) {
     override fun toString(): String {
-        return "${country}, $name"
+        return "$country, $name"
     }
 }

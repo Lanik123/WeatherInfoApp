@@ -22,13 +22,13 @@ fun WeatherDto.WeatherDataDto.toWeatherDataMap(): Map<Int, List<WeatherData>> {
         IndexedWeatherData(
             index = index,
             data =
-                WeatherData(
-                    time = LocalDateTime.parse(time, DateTimeFormatter.ISO_DATE_TIME),
-                    temperatureCelsius = temperature,
-                    pressure = pressure,
-                    windSpeed = windSpeed,
-                    humidity = humidity,
-                ),
+            WeatherData(
+                time = LocalDateTime.parse(time, DateTimeFormatter.ISO_DATE_TIME),
+                temperatureCelsius = temperature,
+                pressure = pressure,
+                windSpeed = windSpeed,
+                humidity = humidity,
+            ),
         )
     }.groupBy {
         it.index / 24
@@ -57,7 +57,7 @@ fun List<CityCordDto>.toCityDataList(): List<CityData> {
             name = it.name,
             country = it.name,
             lat = it.lat,
-            lon = it.lon
+            lon = it.lon,
         )
     }
 }
