@@ -13,6 +13,7 @@ import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
 import retrofit2.create
+import ru.lanik.weatherapp.modules.weather.core.api.GeocodingApi
 import ru.lanik.weatherapp.modules.weather.core.api.WeatherApi
 import javax.inject.Singleton
 
@@ -33,6 +34,15 @@ object AppModule {
     fun provideWeatherApi(type: MediaType): WeatherApi =
         Retrofit.Builder()
             .baseUrl("https://api.open-meteo.com/")
+            .addConverterFactory(format.asConverterFactory(type))
+            .build()
+            .create()
+
+    @Provides
+    @Singleton
+    fun provideGeocodingApi(type: MediaType): GeocodingApi =
+        Retrofit.Builder()
+            .baseUrl("https://api.openweathermap.org/")
             .addConverterFactory(format.asConverterFactory(type))
             .build()
             .create()

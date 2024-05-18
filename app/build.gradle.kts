@@ -25,6 +25,8 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        resValue("string", "openweathermap_key", "7e1b56cbd8c2c4df327b176124304950")
     }
 
     buildTypes {
