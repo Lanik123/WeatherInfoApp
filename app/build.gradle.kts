@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
 
     // Is third party plugins
+    alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.ktlintPlugin)
     alias(libs.plugins.kapt)
     alias(libs.plugins.daggerPlugin)
@@ -75,6 +76,12 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     // Is third party dependencies
+    implementation(libs.gms.location)
+    implementation(libs.datastore)
+    implementation(libs.json.serialization)
+    implementation(libs.okhttp)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.kotlin)
     implementation(libs.constraintlayout)
     implementation(libs.appcompat)
     implementation(libs.navigation.fragment)

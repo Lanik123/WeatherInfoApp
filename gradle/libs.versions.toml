@@ -15,6 +15,12 @@ constraintlayout-ver = "2.1.4"
 appcompat-ver = "1.6.1"
 fragment-ver = "1.7.1"
 accompanist-ver = "0.34.0"
+json-serialization-ver = "1.6.0"
+okhttp-ver = "4.11.0"
+retrofit-ver = "2.9.0"
+retrofit-converter-ver = "1.0.0"
+datastore-ver = "1.1.1"
+gms-location-ver = "21.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -33,6 +39,12 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 
 # Is third party libs
+gms-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "gms-location-ver" }
+datastore = { group = "androidx.datastore", name = "datastore", version.ref = "datastore-ver" }
+json-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "json-serialization-ver" }
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp-ver" }
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit-ver" }
+retrofit-converter-kotlin = { group = "com.jakewharton.retrofit", name = "retrofit2-kotlinx-serialization-converter", version.ref = "retrofit-converter-ver" }
 dagger-hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "dagger-ver" }
 dagger-hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "dagger-ver" }
 dagger-hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "dagger-ver" }
@@ -48,6 +60,7 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 
 # Is third party plugins
+kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 daggerPlugin = { id = "com.google.dagger.hilt.android", version.ref = "dagger-ver" }
 ktlintPlugin = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint-ver" }
