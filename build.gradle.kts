@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android) apply false
 
     // Is third party plugins
+    alias(libs.plugins.ktlintPlugin) apply false
     alias(libs.plugins.kapt) apply false
     alias(libs.plugins.daggerPlugin) apply false
 }

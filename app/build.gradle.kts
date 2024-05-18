@@ -1,8 +1,10 @@
+import org.jlleitschuh.gradle.ktlint.KtlintExtension
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
 
     // Is third party plugins
+    alias(libs.plugins.ktlintPlugin)
     alias(libs.plugins.kapt)
     alias(libs.plugins.daggerPlugin)
 }
@@ -78,4 +80,12 @@ dependencies {
     kaptTest(libs.dagger.hilt.compiler)
     androidTestImplementation(libs.dagger.hilt.android.testing)
     kaptAndroidTest(libs.dagger.hilt.compiler)
+}
+
+kapt {
+    correctErrorTypes=true
+}
+
+configure<KtlintExtension> {
+    version.set("0.49.1")
 }
