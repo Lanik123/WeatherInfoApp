@@ -44,6 +44,7 @@ android {
     }
     buildFeatures {
         compose = true
+        viewBinding = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.14"
@@ -74,6 +75,12 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     // Is third party dependencies
+    implementation(libs.constraintlayout)
+    implementation(libs.appcompat)
+    implementation(libs.navigation.fragment)
+    implementation(libs.navigation.ui)
+    implementation(libs.fragment.ktx)
+    implementation(libs.accompanist.permissions)
     implementation(libs.dagger.hilt.android)
     kapt(libs.dagger.hilt.compiler)
     testImplementation(libs.dagger.hilt.android.testing)
