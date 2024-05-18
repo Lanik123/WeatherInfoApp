@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">WeatherApp</string>
+
+    <string name="weather_fragment_label">Погода</string>
 </resources>
