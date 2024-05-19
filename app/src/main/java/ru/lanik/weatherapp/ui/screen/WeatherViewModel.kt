@@ -1,5 +1,6 @@
 package ru.lanik.weatherapp.ui.screen
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -104,7 +105,7 @@ class WeatherViewModel @Inject constructor(
             if (!_viewState.value.errorMessage.contains(str)) {
                 _viewState.value =
                     _viewState.value.copy(
-                        errorMessage = "${_viewState.value.errorMessage}\n${str}",
+                        errorMessage = "${_viewState.value.errorMessage}\n\n\n${str}",
                     )
             }
         }
