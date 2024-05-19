@@ -29,25 +29,17 @@ class WeatherViewModel @Inject constructor(
                     changeState(ScreenState.ShowForecast)
                 } else if (it.cityInfo == null && it.weatherInfo == null && it.errorMessage.isNotEmpty()) {
                     changeState(ScreenState.Error)
-                } else if (it.cityInfo == null && it.weatherInfo == null && !it.permissionStatus) {
-                    addError("Not enough permissions for the application to work! Please grant all necessary permissions for the application to work correctly!")
-                    changeState(ScreenState.Error)
                 } else if (it.cityInfo == null && it.weatherInfo == null) {
                     changeState(ScreenState.Loading)
-                    delay(200L)
-                    onCitySync(false)
-                    onWeatherSync(false)
                 }
             }
         }
     }
 
-    fun onRefreshClick() {
-        if (_viewState.value.permissionStatus) {
-            onCitySync(true)
-            onWeatherSync(true)
-            clearError()
-        }
+    fun onRefreshClick(forceUpdate: Boolean) {
+        onCitySync(forceUpdate)
+        onWeatherSync(forceUpdate)
+        clearError()
     }
 
     private fun onWeatherSync(forceUpdate: Boolean) {
@@ -81,13 +73,6 @@ class WeatherViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    fun onPermissionStatusChange(status: Boolean) {
-        _viewState.value =
-            _viewState.value.copy(
-                permissionStatus = status,
-            )
     }
 
     private fun changeState(newState: ScreenState) {

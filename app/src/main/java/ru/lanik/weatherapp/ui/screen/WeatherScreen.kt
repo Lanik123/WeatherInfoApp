@@ -10,13 +10,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -81,10 +79,10 @@ fun WeatherScreen(
         )
     }
 
-    val localPermissionStatus = (locationPermissionState.status == PermissionStatus.Granted)
-
-    if (viewState.permissionStatus != localPermissionStatus) {
-        viewModel.onPermissionStatusChange(localPermissionStatus)
+    if (viewState.state == ScreenState.Loading &&
+        locationPermissionState.status == PermissionStatus.Granted
+    ) {
+        viewModel.onRefreshClick(false)
     }
 
     Scaffold(
@@ -108,7 +106,7 @@ fun WeatherScreen(
                     WeatherScreen(
                         cityInfo = viewState.cityInfo!!,
                         weatherInfo = viewState.weatherInfo!!,
-                        onRefreshClick = { viewModel.onRefreshClick() },
+                        onRefreshClick = { viewModel.onRefreshClick(true) },
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(it),
@@ -117,7 +115,7 @@ fun WeatherScreen(
                 ScreenState.Error -> {
                     ErrorScreen(
                         errorMessage = viewState.errorMessage,
-                        onRefreshClick = { viewModel.onRefreshClick() },
+                        onRefreshClick = { viewModel.onRefreshClick(true) },
                         onOpenSettingsClick = { onOpenSettingsClick() },
                         modifier = Modifier
                             .fillMaxSize()
@@ -248,16 +246,16 @@ private fun WeatherScreen(
                 weatherUnits = weatherInfo.weatherUnitsData,
                 currentWeather = weatherInfo.currentWeatherData,
                 modifier = Modifier
-                    .height(200.dp)
                     .fillMaxWidth(),
             )
         }
 
-        Box(
+        Column(
             modifier = Modifier
                 .padding(PaddingValues(16.dp))
                 .fillMaxSize(),
-            contentAlignment = Alignment.Center,
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             DailyWeatherInfo(
                 weatherUnits = weatherInfo.weatherUnitsData,
@@ -301,32 +299,18 @@ private fun CurrentWeatherInfo(
             style = WeatherAppTheme.typography.title1,
             color = WeatherAppTheme.colors.primaryText,
         )
-        Box(
-            modifier = Modifier
-                .height(100.dp)
-                .fillMaxWidth(),
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Image(
-                painter = painterResource(id = currentWeather.weatherType.iconRes),
-                contentDescription = null,
-                contentScale = ContentScale.Fit,
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .size(84.dp),
-            )
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(0.4f)
-                    .fillMaxHeight(0.5f)
-                    .align(Alignment.TopStart),
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .wrapContentSize()
-                        .align(Alignment.Center),
                     verticalArrangement = Arrangement.SpaceAround,
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
                         text = stringResource(R.string.weather_description_humidity),
@@ -338,24 +322,26 @@ private fun CurrentWeatherInfo(
                     Text(
                         text = humidity,
                         modifier = Modifier.align(Alignment.CenterHorizontally),
-                        style = WeatherAppTheme.typography.title3,
+                        style = WeatherAppTheme.typography.body,
                         color = WeatherAppTheme.colors.primaryText,
                     )
                 }
-            }
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(0.4f)
-                    .fillMaxHeight(0.5f)
-                    .align(Alignment.TopEnd),
-            ) {
-                Column(
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Divider(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .wrapContentSize()
-                        .align(Alignment.Center),
-                    verticalArrangement = Arrangement.SpaceBetween,
+                        .padding(start = 12.dp, end = 12.dp)
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(WeatherAppTheme.colors.controlColor),
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Column(
+                    verticalArrangement = Arrangement.SpaceAround,
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
                         text = stringResource(R.string.weather_description_wind),
@@ -367,24 +353,34 @@ private fun CurrentWeatherInfo(
                     Text(
                         text = windSpeed,
                         modifier = Modifier.align(Alignment.CenterHorizontally),
-                        style = WeatherAppTheme.typography.title3,
+                        style = WeatherAppTheme.typography.body,
                         color = WeatherAppTheme.colors.primaryText,
                     )
                 }
             }
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(0.4f)
-                    .fillMaxHeight(0.5f)
-                    .align(Alignment.BottomStart),
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Image(
+                    painter = painterResource(id = currentWeather.weatherType.iconRes),
+                    contentDescription = null,
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .size(84.dp),
+                )
+            }
+
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .wrapContentSize()
-                        .align(Alignment.Center),
-                    verticalArrangement = Arrangement.SpaceBetween,
+                    verticalArrangement = Arrangement.SpaceAround,
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
                         text = stringResource(R.string.weather_description_pressure),
@@ -396,33 +392,26 @@ private fun CurrentWeatherInfo(
                     Text(
                         text = pressure,
                         modifier = Modifier.align(Alignment.CenterHorizontally),
-                        style = WeatherAppTheme.typography.title3,
+                        style = WeatherAppTheme.typography.body,
                         color = WeatherAppTheme.colors.primaryText,
                     )
                 }
-            }
 
-            Divider(
-                modifier = Modifier
-                    .padding(start = 32.dp)
-                    .fillMaxWidth(fraction = 0.25f)
-                    .height(1.dp)
-                    .align(Alignment.CenterStart)
-                    .background(WeatherAppTheme.colors.controlColor),
-            )
+                Spacer(modifier = Modifier.height(4.dp))
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(0.4f)
-                    .fillMaxHeight(0.5f)
-                    .align(Alignment.BottomEnd),
-            ) {
-                Column(
+                Divider(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .wrapContentSize()
-                        .align(Alignment.Center),
-                    verticalArrangement = Arrangement.SpaceBetween,
+                        .padding(start = 12.dp, end = 12.dp)
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(WeatherAppTheme.colors.controlColor),
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Column(
+                    verticalArrangement = Arrangement.SpaceAround,
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
                         text = stringResource(R.string.weather_description_realfeel),
@@ -434,20 +423,11 @@ private fun CurrentWeatherInfo(
                     Text(
                         text = apTemp,
                         modifier = Modifier.align(Alignment.CenterHorizontally),
-                        style = WeatherAppTheme.typography.title3,
+                        style = WeatherAppTheme.typography.body,
                         color = WeatherAppTheme.colors.primaryText,
                     )
                 }
             }
-
-            Divider(
-                modifier = Modifier
-                    .padding(end = 32.dp)
-                    .fillMaxWidth(fraction = 0.25f)
-                    .height(1.dp)
-                    .align(Alignment.CenterEnd)
-                    .background(WeatherAppTheme.colors.controlColor),
-            )
         }
     }
 }
