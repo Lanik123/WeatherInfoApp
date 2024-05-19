@@ -22,6 +22,6 @@ class WeatherManager @Inject constructor(
         if (!networkState) return Resource.Error("Your network connection is disabled. Please enable it before you start working with the application")
         newLocation?.let {
             return weatherRepository.getWeatherData(newLocation.latitude, newLocation.longitude)
-        } ?: return Resource.Error("Couldn't retrieve weather info. Make sure you grant all permission and enable GPS.")
+        } ?: return Resource.Error("Couldn't retrieve information. Make sure you grant all permission and enable GPS.")
     }
 }

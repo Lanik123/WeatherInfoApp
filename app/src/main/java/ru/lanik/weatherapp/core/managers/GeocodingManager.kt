@@ -49,7 +49,7 @@ class GeocodingManager @Inject constructor(
                 localStorage.cityLocation = newLocation
                 return getCityNameAndCaching(newLocation.latitude, newLocation.longitude)
             }
-        } ?: return Resource.Error("Couldn't retrieve location. Make sure you grant all permission and enable GPS.")
+        } ?: return Resource.Error("Couldn't retrieve information. Make sure you grant all permission and enable GPS.")
     }
 
     private suspend fun getCityNameAndCaching(
