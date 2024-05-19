@@ -3,6 +3,7 @@ package ru.lanik.weatherapp.ui.screen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -34,6 +35,8 @@ class WeatherViewModel @Inject constructor(
                     isLoading = true,
                     error = null,
                 )
+
+            delay(200L)
 
             try {
                 cityInfo = geocodingManager.getCityInfo(false)
