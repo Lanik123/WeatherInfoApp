@@ -29,7 +29,7 @@ class GeocodingRepository @Inject constructor(
             )
         } catch (e: Exception) {
             e.printStackTrace()
-            Resource.Error(e.message ?: "An unknown error occurred.")
+            Resource.Error(e.message ?: "Couldn't retrieve city name. Make sure your Network enabled.")
         }
     }
 
@@ -46,7 +46,7 @@ class GeocodingRepository @Inject constructor(
             )
         } catch (e: Exception) {
             e.printStackTrace()
-            Resource.Error(e.message ?: "An unknown error occurred.")
+            Resource.Error(e.message ?: "Couldn't retrieve city cord list. Make sure your Network enabled.")
         }
     }
 }
