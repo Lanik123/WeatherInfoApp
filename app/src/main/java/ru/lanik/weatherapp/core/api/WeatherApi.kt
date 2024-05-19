@@ -5,7 +5,7 @@ import retrofit2.http.Query
 import ru.lanik.weatherapp.core.api.dto.WeatherDto
 
 interface WeatherApi {
-    @GET("v1/forecast?hourly=temperature_2m,weathercode,relativehumidity_2m,windspeed_10m,pressure_msl")
+    @GET("v1/forecast?current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,pressure_msl&daily=weather_code,temperature_2m_max,temperature_2m_min&forecast_days=14")
     suspend fun getWeatherData(
         @Query("latitude") lat: Double,
         @Query("longitude") long: Double,

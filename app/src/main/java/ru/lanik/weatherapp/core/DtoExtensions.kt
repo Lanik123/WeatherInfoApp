@@ -4,51 +4,34 @@ import ru.lanik.weatherapp.core.api.dto.CityCordDto
 import ru.lanik.weatherapp.core.api.dto.CityNameDto
 import ru.lanik.weatherapp.core.api.dto.WeatherDto
 import ru.lanik.weatherapp.core.models.CityInfo
-import ru.lanik.weatherapp.core.models.WeatherData
+import ru.lanik.weatherapp.core.models.CurrentWeatherData
+import ru.lanik.weatherapp.core.models.DailyWeatherData
 import ru.lanik.weatherapp.core.models.WeatherInfo
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-private data class IndexedWeatherData(
-    val index: Int,
-    val data: WeatherData,
-)
-
-fun WeatherDto.WeatherDataDto.toWeatherDataMap(): Map<Int, List<WeatherData>> {
-    return time.mapIndexed { index, time ->
-        val temperature = temperatures[index]
-        val windSpeed = windSpeeds[index]
-        val pressure = pressures[index]
-        val humidity = humidities[index]
-        IndexedWeatherData(
-            index = index,
-            data =
-            WeatherData(
-                time = LocalDateTime.parse(time, DateTimeFormatter.ISO_DATE_TIME),
-                temperatureCelsius = temperature,
-                pressure = pressure,
-                windSpeed = windSpeed,
-                humidity = humidity,
-            ),
-        )
-    }.groupBy {
-        it.index / 24
-    }.mapValues {
-        it.value.map { it.data }
-    }
-}
-
 fun WeatherDto.toWeatherInfo(): WeatherInfo {
-    val weatherDataMap = weatherData.toWeatherDataMap()
-    val now = LocalDateTime.now()
-    val currentWeatherData =
-        weatherDataMap[0]?.find {
-            val hour = if (now.minute < 30) now.hour else now.hour + 1
-            it.time.hour == hour
-        }
+    val currentWeatherData = CurrentWeatherData(
+        time = LocalDateTime.parse(this.currentData.time, DateTimeFormatter.ISO_DATE_TIME),
+        temperature = this.currentData.temperature,
+        apTemperature = this.currentData.apTemperature,
+        pressure = this.currentData.pressure,
+        windSpeed = this.currentData.windSpeed,
+        humidity = this.currentData.humiditiy,
+    )
+
+    val dailyWeatherData = List(this.dailyData.weatherCode.size) { index ->
+        DailyWeatherData(
+            time = LocalDate.parse(this.dailyData.time[index]),
+            temperatureMin = this.dailyData.temperatureMin[index],
+            temperatureMax = this.dailyData.temperatureMax[index],
+        )
+    }
+
     return WeatherInfo(
-        weatherDataPerDay = weatherDataMap,
         currentWeatherData = currentWeatherData,
+        weatherDataPerDay = dailyWeatherData,
     )
 }
 
