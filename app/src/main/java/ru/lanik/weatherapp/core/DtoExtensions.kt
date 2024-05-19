@@ -7,11 +7,20 @@ import ru.lanik.weatherapp.core.models.CityInfo
 import ru.lanik.weatherapp.core.models.CurrentWeatherData
 import ru.lanik.weatherapp.core.models.DailyWeatherData
 import ru.lanik.weatherapp.core.models.WeatherInfo
+import ru.lanik.weatherapp.core.models.WeatherType
+import ru.lanik.weatherapp.core.models.WeatherUnitsData
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 fun WeatherDto.toWeatherInfo(): WeatherInfo {
+    val weatherUnitsData = WeatherUnitsData(
+        temperatureUnits = this.unitsData.temperatureUnits,
+        humidityUnits = this.unitsData.humiditiyUnits,
+        windSpeedUnits = this.unitsData.windSpeedUnits,
+        pressureUnits = this.unitsData.pressureUnits,
+    )
+
     val currentWeatherData = CurrentWeatherData(
         time = LocalDateTime.parse(this.currentData.time, DateTimeFormatter.ISO_DATE_TIME),
         temperature = this.currentData.temperature,
@@ -19,6 +28,7 @@ fun WeatherDto.toWeatherInfo(): WeatherInfo {
         pressure = this.currentData.pressure,
         windSpeed = this.currentData.windSpeed,
         humidity = this.currentData.humiditiy,
+        weatherType = WeatherType.fromWMO(this.currentData.weatherCode),
     )
 
     val dailyWeatherData = List(this.dailyData.weatherCode.size) { index ->
@@ -26,10 +36,12 @@ fun WeatherDto.toWeatherInfo(): WeatherInfo {
             time = LocalDate.parse(this.dailyData.time[index]),
             temperatureMin = this.dailyData.temperatureMin[index],
             temperatureMax = this.dailyData.temperatureMax[index],
+            weatherType = WeatherType.fromWMO(this.dailyData.weatherCode[index]),
         )
     }
 
     return WeatherInfo(
+        weatherUnitsData = weatherUnitsData,
         currentWeatherData = currentWeatherData,
         weatherDataPerDay = dailyWeatherData,
     )

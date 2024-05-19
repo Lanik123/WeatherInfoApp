@@ -5,6 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class WeatherDto(
+    @SerialName("current_units")
+    val unitsData: WeatherUnitsDataDao,
     @SerialName("current")
     val currentData: CurrentWeatherDataDto,
     @SerialName("daily")
@@ -36,5 +38,17 @@ data class WeatherDto(
         val temperatureMax: List<Double>,
         @SerialName("weather_code")
         val weatherCode: List<Int>,
+    )
+
+    @Serializable
+    data class WeatherUnitsDataDao(
+        @SerialName("temperature_2m")
+        val temperatureUnits: String,
+        @SerialName("pressure_msl")
+        val pressureUnits: String,
+        @SerialName("wind_speed_10m")
+        val windSpeedUnits: String,
+        @SerialName("relative_humidity_2m")
+        val humiditiyUnits: String,
     )
 }
