@@ -1,5 +1,8 @@
 package ru.lanik.weatherapp.fragments
 
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import androidx.compose.runtime.Composable
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
@@ -13,6 +16,13 @@ class WeatherFragment : BaseComposeFragment() {
 
     @Composable
     override fun GetContent() {
-        WeatherScreen(viewModel = viewModel)
+        WeatherScreen(viewModel = viewModel, onOpenSettingsClick = { openSettings() })
+    }
+
+    private fun openSettings() {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        val uri: Uri = Uri.fromParts("package", context?.packageName, null)
+        intent.data = uri
+        startActivity(intent)
     }
 }

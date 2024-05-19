@@ -7,4 +7,11 @@
     <string name="weather_description_pressure">Pressure</string>
     <string name="weather_description_wind">Wind Speed</string>
     <string name="weather_description_realfeel">Real feel</string>
+    <string name="weather_description_dialog_label">GPS Permission</string>
+    <string name="weather_description_dialog_text">Please allow access to your location</string>
+    <string name="weather_description_dialog_action_yes">Yes</string>
+    <string name="weather_description_dialog_action_no">No</string>
+    <string name="weather_description_dialog_city_label">This is your city?</string>
+    <string name="weather_action_refresh">Refresh</string>
+    <string name="weather_action_open_settings">Open Settings</string>
 </resources>

@@ -1,5 +1,6 @@
 package ru.lanik.weatherapp.ui.screen
 
+import android.Manifest
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -15,80 +16,226 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.focus.focusModifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionStatus
+import com.google.accompanist.permissions.rememberPermissionState
 import ru.lanik.weatherapp.R
+import ru.lanik.weatherapp.core.models.CityInfo
 import ru.lanik.weatherapp.core.models.CurrentWeatherData
 import ru.lanik.weatherapp.core.models.DailyWeatherData
+import ru.lanik.weatherapp.core.models.ScreenState
 import ru.lanik.weatherapp.core.models.WeatherInfo
-import ru.lanik.weatherapp.core.models.WeatherType
 import ru.lanik.weatherapp.core.models.WeatherUnitsData
+import ru.lanik.weatherapp.ui.helpers.CrossSlide
+import ru.lanik.weatherapp.ui.helpers.LoadingAnimation
 import ru.lanik.weatherapp.ui.theme.WeatherAppTheme
-import ru.lanik.weatherapp.ui.theme.White50
 import java.time.LocalDate
-import java.time.LocalDateTime
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun WeatherScreen(
     viewModel: WeatherViewModel,
+    onOpenSettingsClick: () -> Unit,
 ) {
     val viewState by viewModel.viewState.collectAsState()
+    val locationPermissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
+    var showPermissionNeededDialog by remember { mutableStateOf(locationPermissionState.status != PermissionStatus.Granted) }
+    if (showPermissionNeededDialog) {
+        PermissionNeededDialog(
+            onOkClick = {
+                locationPermissionState.launchPermissionRequest()
+                showPermissionNeededDialog = false
+            },
+            onCancelClick = {
+                showPermissionNeededDialog = false
+            },
+        )
+    }
+
+    val localPermissionStatus = (locationPermissionState.status == PermissionStatus.Granted)
+
+    if (viewState.permissionStatus != localPermissionStatus) {
+        viewModel.onPermissionStatusChange(localPermissionStatus)
+    }
+
     Scaffold(
         containerColor = WeatherAppTheme.colors.secondaryBackground,
         modifier = Modifier.fillMaxSize(),
     ) {
-        Column(
-            modifier = Modifier.padding(it),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            if (viewState.isLoading) {
-                Text("Loading", color = Color.White)
-            } else if (viewState.weatherInfo != null && viewState.cityInfo != null) {
-                CurrentWeatherInfo(
-                    cityName = viewState.cityInfo!!.name,
-                    weatherUnits = viewState.weatherInfo!!.weatherUnitsData,
-                    currentWeather = viewState.weatherInfo!!.currentWeatherData,
-                    modifier = Modifier
-                        .height(200.dp)
-                        .fillMaxWidth(),
-                )
-                Box(
-                    modifier = Modifier
-                        .padding(PaddingValues(16.dp))
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    DailyWeatherInfo(
-                        weatherUnits = viewState.weatherInfo!!.weatherUnitsData,
-                        weatherDataPerDay = viewState.weatherInfo!!.weatherDataPerDay,
+        CrossSlide(
+            targetState = viewState.state,
+            modifier = Modifier.fillMaxSize(),
+            reverseAnimation = false,
+        ) { stage ->
+            when (stage) {
+                ScreenState.Loading -> {
+                    LoadingScreen(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(it),
+                    )
+                }
+                ScreenState.ShowForecast -> {
+                    WeatherScreen(
+                        cityInfo = viewState.cityInfo!!,
+                        weatherInfo = viewState.weatherInfo!!,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(it),
+                    )
+                }
+                ScreenState.Error -> {
+                    ErrorScreen(
+                        errorMessage = viewState.errorMessage,
+                        onRefreshClick = { viewModel.onRefreshClick() },
+                        onOpenSettingsClick = { onOpenSettingsClick() },
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(it),
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun ErrorScreen(
+    errorMessage: String,
+    onRefreshClick: () -> Unit,
+    onOpenSettingsClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = modifier,
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .weight(2f)
+                .fillMaxWidth(),
+        ) {
+            Image(
+                painter = painterResource(R.drawable.ic_attention_20),
+                contentDescription = null,
+                modifier = Modifier.size(48.dp)
+            )
+            Spacer(Modifier.height(20.dp))
+            Text(
+                text = errorMessage,
+                modifier = Modifier.padding(horizontal = 32.dp, vertical = 12.dp),
+                textAlign = TextAlign.Center,
+                style = WeatherAppTheme.typography.subhead2,
+                color = WeatherAppTheme.colors.secondaryText,
+            )
+        }
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
+        ) {
+            Button(
+                onClick = { onOpenSettingsClick() },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = WeatherAppTheme.colors.tintColor
+                )
+            ) {
+                Text(
+                    text = stringResource(id = R.string.weather_action_open_settings),
+                    textAlign = TextAlign.Center,
+                    style = WeatherAppTheme.typography.subhead2,
+                    color = WeatherAppTheme.colors.primaryBackground,
+                )
+            }
+
+            Button(
+                onClick = { onRefreshClick() },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = WeatherAppTheme.colors.tintColor
+                )
+            ) {
+                Text(
+                    text = stringResource(id = R.string.weather_action_refresh),
+                    textAlign = TextAlign.Center,
+                    style = WeatherAppTheme.typography.subhead2,
+                    color = WeatherAppTheme.colors.primaryBackground,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun LoadingScreen(
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = modifier,
+    ) {
+        LoadingAnimation()
+    }
+}
+
+@Composable
+private fun WeatherScreen(
+    cityInfo: CityInfo,
+    weatherInfo: WeatherInfo,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        CurrentWeatherInfo(
+            cityName = cityInfo.name,
+            weatherUnits = weatherInfo.weatherUnitsData,
+            currentWeather = weatherInfo.currentWeatherData,
+            modifier = Modifier
+                .height(200.dp)
+                .fillMaxWidth(),
+        )
+        Box(
+            modifier = Modifier
+                .padding(PaddingValues(16.dp))
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            DailyWeatherInfo(
+                weatherUnits = weatherInfo.weatherUnitsData,
+                weatherDataPerDay = weatherInfo.weatherDataPerDay,
+            )
         }
     }
 }
@@ -288,7 +435,11 @@ private fun DailyWeatherInfo(
         modifier = modifier
             .background(WeatherAppTheme.colors.primaryBackground)
             .clip(WeatherAppTheme.shapes.cornersStyle)
-            .border(width = 4.dp, WeatherAppTheme.colors.tintColor, WeatherAppTheme.shapes.cornersStyle),
+            .border(
+                width = 4.dp,
+                WeatherAppTheme.colors.tintColor,
+                WeatherAppTheme.shapes.cornersStyle
+            ),
         contentPadding = PaddingValues(WeatherAppTheme.shapes.generalPadding),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -351,35 +502,121 @@ private fun DailyWeatherItem(
     }
 }
 
-@Preview
 @Composable
-private fun PreviewScreen() {
-    WeatherAppTheme {
-        Scaffold(modifier = Modifier.fillMaxSize()) {
-            Column(
-                modifier = Modifier.padding(it),
-                horizontalAlignment = Alignment.CenterHorizontally
+private fun PermissionNeededDialog(
+    onOkClick: () -> Unit,
+    onCancelClick: () -> Unit,
+) {
+    Dialog(onDismissRequest = onCancelClick) {
+        Column(
+            modifier =
+            Modifier
+                .clip(WeatherAppTheme.shapes.cornersStyle)
+                .background(color = WeatherAppTheme.colors.primaryBackground)
+                .padding(horizontal = 24.dp, vertical = 20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = stringResource(id = R.string.weather_description_dialog_label),
+                color = WeatherAppTheme.colors.primaryText,
+                style = WeatherAppTheme.typography.body,
+                textAlign = TextAlign.Center,
+            )
+            Spacer(Modifier.height(12.dp))
+            Text(
+                text = stringResource(id = R.string.weather_description_dialog_text),
+                color = WeatherAppTheme.colors.primaryText,
+                style = WeatherAppTheme.typography.body,
+                textAlign = TextAlign.Center,
+            )
+            Spacer(Modifier.height(16.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceAround,
             ) {
-                CurrentWeatherInfo(
-                    cityName = "Brest",
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    weatherUnits = WeatherUnitsData(),
-                    currentWeather = CurrentWeatherData()
-                )
-                Box(
-                    modifier = Modifier
-                        .padding(PaddingValues(16.dp))
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
+                Button(
+                    onClick = onCancelClick,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = WeatherAppTheme.colors.tintColor
+                    )
                 ) {
-                    DailyWeatherInfo(
-                        weatherUnits = WeatherUnitsData(),
-                        weatherDataPerDay = listOf(DailyWeatherData()),
-                        modifier = Modifier.fillMaxWidth(fraction = 0.9f)
+                    Text(
+                        text = stringResource(id = R.string.weather_description_dialog_action_no),
+                        color = WeatherAppTheme.colors.primaryBackground,
+                        style = WeatherAppTheme.typography.headline2,
+                        textAlign = TextAlign.Center,
+                    )
+                }
+                Button(
+                    onClick = onOkClick,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = WeatherAppTheme.colors.tintColor
+                    )
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.weather_description_dialog_action_yes),
+                        color = WeatherAppTheme.colors.primaryBackground,
+                        style = WeatherAppTheme.typography.headline2,
+                        textAlign = TextAlign.Center,
                     )
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewScreen() {
+    WeatherAppTheme {
+        Scaffold(
+            containerColor = WeatherAppTheme.colors.secondaryBackground,
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            CrossSlide(
+                targetState = ScreenState.Error,
+                modifier = Modifier
+                    .padding(it)
+                    .fillMaxSize(),
+                reverseAnimation = false,
+            ) { stage ->
+                when (stage) {
+                    ScreenState.Loading -> {
+                        LoadingScreen(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(it),
+                        )
+                    }
+                    ScreenState.ShowForecast -> {
+                        WeatherScreen(
+                            cityInfo = CityInfo("Brest", "", 0.0, 0.0),
+                            weatherInfo = WeatherInfo(WeatherUnitsData(), listOf(DailyWeatherData()), CurrentWeatherData()),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(it),
+                        )
+                    }
+                    ScreenState.Error -> {
+                        ErrorScreen(
+                            errorMessage = "",
+                            onRefreshClick = { },
+                            onOpenSettingsClick = { },
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(it),
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun Preview_PermissionNeededDialog() {
+    WeatherAppTheme {
+        PermissionNeededDialog({}, {})
     }
 }

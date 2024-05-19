@@ -14,9 +14,9 @@ interface ILocalStorage {
 }
 
 interface IGeocodingManager {
-    suspend fun getCityInfo(forceNew: Boolean): CityInfo
+    suspend fun getCityInfo(forceNew: Boolean): Resource<CityInfo>
 }
 
 interface IWeatherManager {
-    suspend fun getWeatherInfo(forceNew: Boolean): WeatherInfo
+    suspend fun getWeatherInfo(forceNew: Boolean): Resource<WeatherInfo>
 }

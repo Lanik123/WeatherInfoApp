@@ -6,6 +6,7 @@ import ru.lanik.weatherapp.core.IWeatherManager
 import ru.lanik.weatherapp.core.Resource
 import ru.lanik.weatherapp.core.models.WeatherInfo
 import ru.lanik.weatherapp.core.providers.DefaultLocationProvider
+import ru.lanik.weatherapp.core.providers.NetworkStateProvider
 import ru.lanik.weatherapp.core.repository.WeatherRepository
 import javax.inject.Inject
 
@@ -13,12 +14,16 @@ class WeatherManager @Inject constructor(
     private val weatherRepository: WeatherRepository,
     private val localStorage: ILocalStorage,
     private val defaultLocationProvider: DefaultLocationProvider,
+    private val networkStateProvider: NetworkStateProvider,
 ) : IWeatherManager {
-    override suspend fun getWeatherInfo(forceNew: Boolean): WeatherInfo {
+    override suspend fun getWeatherInfo(forceNew: Boolean): Resource<WeatherInfo> {
         val newLocation = defaultLocationProvider.getCurrentLocation() ?: localStorage.cityLocation
+        val networkState = networkStateProvider.isNetworkAvailable()
+
+        if(!networkState) return Resource.Error("Your network connection is disabled. Please enable it before you start working with the application")
         newLocation?.let {
-            return getWeatherInfoFromGps(newLocation)
-        } ?: throw Exception("Couldn't retrieve location. Make sure to grant permission and enable GPS.")
+            return weatherRepository.getWeatherData(newLocation.latitude, newLocation.longitude)
+        } ?: return Resource.Error("Couldn't retrieve weather info. Make sure you grant all permission and enable GPS.")
     }
 
     /*private fun isLocationSignificantChanged(oldLocation: Location, newLocation: Location): Boolean {
@@ -33,15 +38,4 @@ class WeatherManager @Inject constructor(
         val duration = Duration.between(timestamp, now)
         return duration.toMinutes() >= intervalThreshold
     }*/
-
-    private suspend fun getWeatherInfoFromGps(newLocation: Location): WeatherInfo {
-        when (val result = weatherRepository.getWeatherData(newLocation.latitude, newLocation.longitude)) {
-            is Resource.Success -> {
-                return result.data!!
-            }
-            is Resource.Error -> {
-                throw Exception(result.message)
-            }
-        }
-    }
 }

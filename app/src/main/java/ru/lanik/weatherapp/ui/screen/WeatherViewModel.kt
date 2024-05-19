@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import ru.lanik.weatherapp.core.IGeocodingManager
 import ru.lanik.weatherapp.core.IWeatherManager
-import ru.lanik.weatherapp.core.models.CityInfo
-import ru.lanik.weatherapp.core.models.WeatherInfo
+import ru.lanik.weatherapp.core.Resource
+import ru.lanik.weatherapp.core.models.ScreenState
 import ru.lanik.weatherapp.core.models.WeatherViewState
 import javax.inject.Inject
 
@@ -23,38 +23,97 @@ class WeatherViewModel @Inject constructor(
     val viewState = _viewState.asStateFlow()
 
     init {
-        var cityInfo: CityInfo? = null
-        var weatherInfo: WeatherInfo? = null
-        var errorMessage: String? = null
-
         viewModelScope.launch {
-            _viewState.value =
-                _viewState.value.copy(
-                    isLoading = true,
-                    error = null,
-                )
+            viewState.collect {
+                if(it.cityInfo != null && it.weatherInfo != null) {
+                    changeState(ScreenState.ShowForecast)
+                } else if (it.cityInfo == null && it.weatherInfo == null && it.errorMessage.isNotEmpty()) {
+                    changeState(ScreenState.Error)
+                } else if (it.cityInfo == null && it.weatherInfo == null && !it.permissionStatus) {
+                    addError("Not enough permissions for the application to work! Please grant all necessary permissions for the application to work correctly!")
+                    changeState(ScreenState.Error)
+                } else {
+                    changeState(ScreenState.Loading)
+                    delay(200L)
+                    onCitySync(false)
+                    onWeatherSync(false)
+                }
+            }
+        }
+    }
 
+    fun onRefreshClick() {
+        if (_viewState.value.permissionStatus) {
+            onCitySync(true)
+            onWeatherSync(true)
+            clearError()
+        }
+    }
+
+    private fun onWeatherSync(forceUpdate: Boolean) {
+        viewModelScope.launch {
+            when(val result = weatherManager.getWeatherInfo(forceUpdate)) {
+                is Resource.Success -> {
+                    _viewState.value =
+                        _viewState.value.copy(
+                            weatherInfo = result.data,
+                        )
+                }
+                is Resource.Error -> {
+                    addError(result.message)
+                }
+            }
+        }
+    }
+
+    private fun onCitySync(forceUpdate: Boolean) {
+        viewModelScope.launch {
             delay(200L)
-
-            try {
-                cityInfo = geocodingManager.getCityInfo(false)
-            } catch (e: Exception) {
-                errorMessage = e.message
+            when(val result = geocodingManager.getCityInfo(forceUpdate)) {
+                is Resource.Success -> {
+                    _viewState.value =
+                        _viewState.value.copy(
+                            cityInfo = result.data,
+                        )
+                }
+                is Resource.Error -> {
+                    addError(result.message)
+                }
             }
+        }
+    }
 
-            try {
-                weatherInfo = weatherManager.getWeatherInfo(false)
-            } catch (e: Exception) {
-                errorMessage = e.message
-            }
+    fun onPermissionStatusChange(status: Boolean ) {
+        _viewState.value =
+            _viewState.value.copy(
+                permissionStatus = status,
+            )
+    }
 
+    private fun changeState(newState: ScreenState) {
+        if (_viewState.value.state != newState) {
             _viewState.value =
                 _viewState.value.copy(
-                    cityInfo = cityInfo,
-                    weatherInfo = weatherInfo,
-                    isLoading = false,
-                    error = errorMessage,
+                    state = newState,
                 )
         }
+    }
+
+    private fun addError(str: String?) {
+        str?.let {
+            if (!_viewState.value.errorMessage.contains(str)) {
+                _viewState.value =
+                    _viewState.value.copy(
+                        errorMessage = "${_viewState.value.errorMessage}\n${str}",
+                    )
+            }
+        }
+    }
+
+    private fun clearError() {
+        _viewState.value =
+            _viewState.value.copy(
+                errorMessage = "",
+            )
     }
 }
