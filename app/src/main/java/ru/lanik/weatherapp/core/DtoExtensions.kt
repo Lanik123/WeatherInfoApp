@@ -32,7 +32,7 @@ fun WeatherDto.toWeatherInfo(): WeatherInfo {
 
     val dailyWeatherData = List(this.dailyData.weatherCode.size) { index ->
         DailyWeatherData(
-            time = LocalDate.parse(this.dailyData.time[index]),
+            time = LocalDate.parse(this.dailyData.time[index], DateTimeFormatter.ISO_DATE),
             temperatureMin = this.dailyData.temperatureMin[index],
             temperatureMax = this.dailyData.temperatureMax[index],
             weatherType = WeatherType.fromWMO(this.dailyData.weatherCode[index]),
