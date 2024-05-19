@@ -19,10 +19,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -104,6 +110,7 @@ fun WeatherScreen(
                     WeatherScreen(
                         cityInfo = viewState.cityInfo!!,
                         weatherInfo = viewState.weatherInfo!!,
+                        onRefreshClick = { viewModel.onRefreshClick() },
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(it),
@@ -212,20 +219,42 @@ private fun LoadingScreen(
 private fun WeatherScreen(
     cityInfo: CityInfo,
     weatherInfo: WeatherInfo,
+    onRefreshClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        CurrentWeatherInfo(
-            cityName = cityInfo.name,
-            weatherUnits = weatherInfo.weatherUnitsData,
-            currentWeather = weatherInfo.currentWeatherData,
-            modifier = Modifier
-                .height(200.dp)
-                .fillMaxWidth(),
-        )
+        Box {
+            Row(
+                modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(WeatherAppTheme.shapes.generalPadding),
+                horizontalArrangement = Arrangement.End,
+            ) {
+                SmallFloatingActionButton(
+                    containerColor = WeatherAppTheme.colors.tintColor,
+                    onClick = { onRefreshClick() }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = null,
+                        tint = WeatherAppTheme.colors.primaryBackground,
+                    )
+                }
+            }
+            CurrentWeatherInfo(
+                cityName = cityInfo.name,
+                weatherUnits = weatherInfo.weatherUnitsData,
+                currentWeather = weatherInfo.currentWeatherData,
+                modifier = Modifier
+                    .height(200.dp)
+                    .fillMaxWidth(),
+            )
+        }
+
         Box(
             modifier = Modifier
                 .padding(PaddingValues(16.dp))
@@ -574,7 +603,7 @@ private fun PreviewScreen() {
             modifier = Modifier.fillMaxSize(),
         ) {
             CrossSlide(
-                targetState = ScreenState.Error,
+                targetState = ScreenState.ShowForecast,
                 modifier = Modifier
                     .padding(it)
                     .fillMaxSize(),
@@ -592,6 +621,7 @@ private fun PreviewScreen() {
                         WeatherScreen(
                             cityInfo = CityInfo("Brest", "", 0.0, 0.0),
                             weatherInfo = WeatherInfo(WeatherUnitsData(), listOf(DailyWeatherData()), CurrentWeatherData()),
+                            onRefreshClick = { },
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(it),
