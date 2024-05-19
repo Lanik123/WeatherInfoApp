@@ -31,16 +31,16 @@ fun WeatherAppTheme(
     val shapes =
         WeatherAppShape(
             generalPadding =
-                when (paddingSize) {
-                    WeatherAppSize.Small -> 12.dp
-                    WeatherAppSize.Medium -> 16.dp
-                    WeatherAppSize.Big -> 20.dp
-                },
+            when (paddingSize) {
+                WeatherAppSize.Small -> 12.dp
+                WeatherAppSize.Medium -> 16.dp
+                WeatherAppSize.Big -> 20.dp
+            },
             cornersStyle =
-                when (corners) {
-                    WeatherAppCorners.Flat -> RoundedCornerShape(0.dp)
-                    WeatherAppCorners.Rounded -> RoundedCornerShape(8.dp)
-                },
+            when (corners) {
+                WeatherAppCorners.Flat -> RoundedCornerShape(0.dp)
+                WeatherAppCorners.Rounded -> RoundedCornerShape(8.dp)
+            },
         )
     CompositionLocalProvider(
         LocalWeatherAppColors provides colorScheme,

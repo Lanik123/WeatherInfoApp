@@ -9,8 +9,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import ru.lanik.weatherapp.core.IGeocodingManager
 import ru.lanik.weatherapp.core.IWeatherManager
-import ru.lanik.weatherapp.core.managers.GeocodingManager
-import ru.lanik.weatherapp.core.managers.WeatherManager
 import ru.lanik.weatherapp.core.models.CityInfo
 import ru.lanik.weatherapp.core.models.WeatherInfo
 import ru.lanik.weatherapp.core.models.WeatherViewState

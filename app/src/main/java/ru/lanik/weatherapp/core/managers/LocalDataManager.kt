@@ -75,7 +75,7 @@ class LocalDataManager @Inject constructor(
             writeData(
                 localDataState.value.copy(
                     cityLat = value?.latitude,
-                    cityLon = value?.longitude
+                    cityLon = value?.longitude,
                 ),
             )
         }
@@ -86,7 +86,9 @@ class LocalDataManager @Inject constructor(
                 this.latitude = latitude
                 this.longitude = longitude
             }
-        } else null
+        } else {
+            null
+        }
     }
 
     private fun writeData(newModel: LocalDataState) {

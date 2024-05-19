@@ -15,7 +15,7 @@ import kotlin.coroutines.resume
 class DefaultLocationProvider @Inject constructor(
     private val locationClient: FusedLocationProviderClient,
     private val application: Application,
-)  {
+) {
     suspend fun getCurrentLocation(): Location? {
         val hasAccessFineLocationPermission =
             ContextCompat.checkSelfPermission(

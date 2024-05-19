@@ -2,7 +2,6 @@ package ru.lanik.weatherapp.fragments
 
 import androidx.compose.runtime.Composable
 import androidx.fragment.app.viewModels
-import androidx.navigation.NavController
 import dagger.hilt.android.AndroidEntryPoint
 import ru.lanik.weatherapp.core.BaseComposeFragment
 import ru.lanik.weatherapp.ui.screen.WeatherScreen
