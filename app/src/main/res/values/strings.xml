@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WeatherApp</string>
+    <string name="app_name">Weather Info</string>
 
     <string name="weather_fragment_label">Weather</string>
     <string name="weather_description_currentlocation">Current Location</string>
