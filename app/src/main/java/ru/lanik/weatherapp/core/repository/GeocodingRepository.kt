@@ -5,7 +5,8 @@ import ru.lanik.weatherapp.R
 import ru.lanik.weatherapp.core.Resource
 import ru.lanik.weatherapp.core.api.GeocodingApi
 import ru.lanik.weatherapp.core.models.CityInfo
-import ru.lanik.weatherapp.core.toCityDataList
+import ru.lanik.weatherapp.core.toCityInfo
+import ru.lanik.weatherapp.core.toCityInfoList
 import javax.inject.Inject
 
 class GeocodingRepository @Inject constructor(
@@ -17,7 +18,7 @@ class GeocodingRepository @Inject constructor(
     suspend fun getCityName(
         lat: Double,
         long: Double,
-    ): Resource<String> {
+    ): Resource<CityInfo> {
         return try {
             Resource.Success(
                 data =
@@ -25,7 +26,7 @@ class GeocodingRepository @Inject constructor(
                     lat = lat,
                     lon = long,
                     appid = key,
-                ).first().name,
+                ).first().toCityInfo(lat, long),
             )
         } catch (e: Exception) {
             e.printStackTrace()
@@ -42,7 +43,7 @@ class GeocodingRepository @Inject constructor(
                 api.getCityCord(
                     q = str,
                     appid = key,
-                ).toCityDataList(),
+                ).toCityInfoList(),
             )
         } catch (e: Exception) {
             e.printStackTrace()
