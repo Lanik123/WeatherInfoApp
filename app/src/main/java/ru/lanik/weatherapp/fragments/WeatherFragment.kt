@@ -13,7 +13,7 @@ class WeatherFragment : BaseComposeFragment() {
     private val viewModel: WeatherViewModel by viewModels()
 
     @Composable
-    override fun GetContent(navController: NavController) {
-        WeatherScreen(navController = navController, viewModel = viewModel)
+    override fun GetContent() {
+        WeatherScreen(viewModel = viewModel)
     }
 }

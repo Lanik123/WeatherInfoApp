@@ -14,7 +14,6 @@ import androidx.navigation.NavController
 
 @Composable
 fun WeatherScreen(
-    navController: NavController,
     viewModel: WeatherViewModel,
 ) {
     val viewState by viewModel.viewState.collectAsState()
