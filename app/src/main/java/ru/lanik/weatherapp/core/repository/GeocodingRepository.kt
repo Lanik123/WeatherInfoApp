@@ -4,7 +4,7 @@ import android.app.Application
 import ru.lanik.weatherapp.R
 import ru.lanik.weatherapp.core.Resource
 import ru.lanik.weatherapp.core.api.GeocodingApi
-import ru.lanik.weatherapp.core.models.CityData
+import ru.lanik.weatherapp.core.models.CityInfo
 import ru.lanik.weatherapp.core.toCityDataList
 import javax.inject.Inject
 
@@ -35,7 +35,7 @@ class GeocodingRepository @Inject constructor(
 
     suspend fun getCityCord(
         str: String,
-    ): Resource<List<CityData>> {
+    ): Resource<List<CityInfo>> {
         return try {
             Resource.Success(
                 data =

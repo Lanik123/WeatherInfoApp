@@ -1,6 +1,6 @@
 package ru.lanik.weatherapp.core.models
 
-data class CityData(
+data class CityInfo(
     val name: String,
     val country: String,
     val lat: Double,

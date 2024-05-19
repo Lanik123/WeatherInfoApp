@@ -2,7 +2,7 @@ package ru.lanik.weatherapp.core
 
 import ru.lanik.weatherapp.core.api.dto.CityCordDto
 import ru.lanik.weatherapp.core.api.dto.WeatherDto
-import ru.lanik.weatherapp.core.models.CityData
+import ru.lanik.weatherapp.core.models.CityInfo
 import ru.lanik.weatherapp.core.models.WeatherData
 import ru.lanik.weatherapp.core.models.WeatherInfo
 import java.time.LocalDateTime
@@ -51,9 +51,9 @@ fun WeatherDto.toWeatherInfo(): WeatherInfo {
     )
 }
 
-fun List<CityCordDto>.toCityDataList(): List<CityData> {
+fun List<CityCordDto>.toCityDataList(): List<CityInfo> {
     return this.map {
-        CityData(
+        CityInfo(
             name = it.name,
             country = it.name,
             lat = it.lat,
