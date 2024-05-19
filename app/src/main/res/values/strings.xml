@@ -2,4 +2,9 @@
     <string name="app_name">WeatherApp</string>
 
     <string name="weather_fragment_label">Weather</string>
+    <string name="weather_description_currentlocation">Current Location</string>
+    <string name="weather_description_humidity">Humidity</string>
+    <string name="weather_description_pressure">Pressure</string>
+    <string name="weather_description_wind">Wind Speed</string>
+    <string name="weather_description_realfeel">Real feel</string>
 </resources>
