@@ -1,4 +1,4 @@
-package ru.lanik.weatherapp.core.managers
+package ru.lanik.weatherapp.core.providers
 
 import android.Manifest
 import android.app.Application
@@ -9,17 +9,14 @@ import android.location.LocationManager
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import kotlinx.coroutines.suspendCancellableCoroutine
-import ru.lanik.weatherapp.core.ILocationManager
 import javax.inject.Inject
 import kotlin.coroutines.resume
 
-class DefaultLocationManager
-@Inject
-constructor(
+class DefaultLocationProvider @Inject constructor(
     private val locationClient: FusedLocationProviderClient,
     private val application: Application,
-) : ILocationManager {
-    override suspend fun getCurrentLocation(): Location? {
+)  {
+    suspend fun getCurrentLocation(): Location? {
         val hasAccessFineLocationPermission =
             ContextCompat.checkSelfPermission(
                 application,
