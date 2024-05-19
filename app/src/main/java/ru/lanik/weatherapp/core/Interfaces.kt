@@ -16,9 +16,9 @@ interface ILocalStorage {
 }
 
 interface IGeocodingManager {
-    fun getCityInfo(coroutineScope: CoroutineScope, forceNew: Boolean): CityInfo?
+    suspend fun getCityInfo(forceNew: Boolean): CityInfo
 }
 
 interface IWeatherManager {
-    fun getWeatherInfo(coroutineScope: CoroutineScope, forceNew: Boolean): WeatherInfo?
+    suspend fun getWeatherInfo(forceNew: Boolean): WeatherInfo
 }

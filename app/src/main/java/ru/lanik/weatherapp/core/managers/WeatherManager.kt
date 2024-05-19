@@ -1,8 +1,6 @@
 package ru.lanik.weatherapp.core.managers
 
 import android.location.Location
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import ru.lanik.weatherapp.core.ILocalStorage
 import ru.lanik.weatherapp.core.IWeatherManager
 import ru.lanik.weatherapp.core.Resource
@@ -16,15 +14,11 @@ class WeatherManager @Inject constructor(
     private val localStorage: ILocalStorage,
     private val defaultLocationProvider: DefaultLocationProvider,
 ) : IWeatherManager {
-    override fun getWeatherInfo(coroutineScope: CoroutineScope, forceNew: Boolean): WeatherInfo? {
-        coroutineScope.launch {
-            val newLocation = defaultLocationProvider.getCurrentLocation() ?: localStorage.cityLocation
-
-            newLocation?.let {
-                return@let getWeatherInfoFromGps(newLocation)
-            } ?: throw Exception("Couldn't retrieve location. Make sure to grant permission and enable GPS.")
-        }
-        return null
+    override suspend fun getWeatherInfo(forceNew: Boolean): WeatherInfo {
+        val newLocation = defaultLocationProvider.getCurrentLocation() ?: localStorage.cityLocation
+        newLocation?.let {
+            return getWeatherInfoFromGps(newLocation)
+        } ?: throw Exception("Couldn't retrieve location. Make sure to grant permission and enable GPS.")
     }
 
     /*private fun isLocationSignificantChanged(oldLocation: Location, newLocation: Location): Boolean {

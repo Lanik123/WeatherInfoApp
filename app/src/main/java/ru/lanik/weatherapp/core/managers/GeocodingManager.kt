@@ -1,8 +1,6 @@
 package ru.lanik.weatherapp.core.managers
 
 import android.location.Location
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import ru.lanik.weatherapp.core.IGeocodingManager
 import ru.lanik.weatherapp.core.ILocalStorage
 import ru.lanik.weatherapp.core.Resource
@@ -16,33 +14,30 @@ class GeocodingManager @Inject constructor(
     private val localStorage: ILocalStorage,
     private val defaultLocationProvider: DefaultLocationProvider,
 ) : IGeocodingManager {
-    override fun getCityInfo(coroutineScope: CoroutineScope, forceNew: Boolean): CityInfo? {
-        coroutineScope.launch {
-            val newLocation = defaultLocationProvider.getCurrentLocation() ?: localStorage.cityLocation
+    override suspend fun getCityInfo(forceNew: Boolean): CityInfo {
+        val newLocation = defaultLocationProvider.getCurrentLocation() ?: localStorage.cityLocation
 
-            newLocation?.let {
-                if (forceNew) {
+        newLocation?.let {
+            if (forceNew) {
+                localStorage.cityLocation = newLocation
+                return getCityInfoFromGps(newLocation)
+            } else if (localStorage.cityName != null && localStorage.countryCode != null && localStorage.cityLocation != null) {
+                if (isLocationSignificantChanged(localStorage.cityLocation!!, newLocation)){
                     localStorage.cityLocation = newLocation
-                    return@let getCityInfoFromGps(newLocation)
-                } else if (localStorage.cityName != null && localStorage.countryCode != null && localStorage.cityLocation != null) {
-                    if (isLocationSignificantChanged(localStorage.cityLocation!!, newLocation)){
-                        localStorage.cityLocation = newLocation
-                        return@let getCityInfoFromGps(newLocation)
-                    } else {
-                        return@let CityInfo(
-                            name = localStorage.cityName!!,
-                            country = localStorage.countryCode!!,
-                            lat = localStorage.cityLocation!!.latitude,
-                            lon = localStorage.cityLocation!!.longitude,
-                        )
-                    }
+                    return getCityInfoFromGps(newLocation)
                 } else {
-                    localStorage.cityLocation = newLocation
-                    return@let getCityInfoFromGps(newLocation)
+                    return CityInfo(
+                        name = localStorage.cityName!!,
+                        country = localStorage.countryCode!!,
+                        lat = localStorage.cityLocation!!.latitude,
+                        lon = localStorage.cityLocation!!.longitude,
+                    )
                 }
-            } ?: throw Exception("Couldn't retrieve location. Make sure to grant permission and enable GPS.")
-        }
-        return null
+            } else {
+                localStorage.cityLocation = newLocation
+                return getCityInfoFromGps(newLocation)
+            }
+        } ?: throw Exception("Couldn't retrieve location. Make sure to grant permission and enable GPS.")
     }
 
     private fun isLocationSignificantChanged(oldLocation: Location, newLocation: Location): Boolean {
