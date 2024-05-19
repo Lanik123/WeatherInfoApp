@@ -1,4 +1,4 @@
-package ru.lanik.weatherapp.modules.weather.core.models
+package ru.lanik.weatherapp.core.models
 
 data class CityData(
     val name: String,

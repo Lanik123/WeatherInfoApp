@@ -1,9 +1,9 @@
-package ru.lanik.weatherapp.modules.weather.core.api
+package ru.lanik.weatherapp.core.api
 
 import retrofit2.http.GET
 import retrofit2.http.Query
-import ru.lanik.weatherapp.modules.weather.core.api.dto.CityCordDto
-import ru.lanik.weatherapp.modules.weather.core.api.dto.CityNameDto
+import ru.lanik.weatherapp.core.api.dto.CityCordDto
+import ru.lanik.weatherapp.core.api.dto.CityNameDto
 
 interface GeocodingApi {
     @GET("geo/1.0/reverse?")

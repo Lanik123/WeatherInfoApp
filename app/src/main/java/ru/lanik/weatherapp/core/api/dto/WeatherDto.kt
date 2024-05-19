@@ -1,4 +1,4 @@
-package ru.lanik.weatherapp.modules.weather.core.api.dto
+package ru.lanik.weatherapp.core.api.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

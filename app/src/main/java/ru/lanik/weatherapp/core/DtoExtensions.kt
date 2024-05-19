@@ -1,10 +1,10 @@
-package ru.lanik.weatherapp.modules.weather.core
+package ru.lanik.weatherapp.core
 
-import ru.lanik.weatherapp.modules.weather.core.api.dto.CityCordDto
-import ru.lanik.weatherapp.modules.weather.core.api.dto.WeatherDto
-import ru.lanik.weatherapp.modules.weather.core.models.CityData
-import ru.lanik.weatherapp.modules.weather.core.models.WeatherData
-import ru.lanik.weatherapp.modules.weather.core.models.WeatherInfo
+import ru.lanik.weatherapp.core.api.dto.CityCordDto
+import ru.lanik.weatherapp.core.api.dto.WeatherDto
+import ru.lanik.weatherapp.core.models.CityData
+import ru.lanik.weatherapp.core.models.WeatherData
+import ru.lanik.weatherapp.core.models.WeatherInfo
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 

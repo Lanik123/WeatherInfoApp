@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/WeatherFragment"
-        android:name="ru.lanik.weatherapp.modules.weather.WeatherFragment"
+        android:name="ru.lanik.weatherapp.fragments.WeatherFragment"
         android:label="@string/weather_fragment_label" >
     </fragment>
 </navigation>

@@ -1,9 +1,9 @@
-package ru.lanik.weatherapp.modules.weather.core.repository
+package ru.lanik.weatherapp.core.repository
 
-import ru.lanik.weatherapp.modules.weather.core.Resource
-import ru.lanik.weatherapp.modules.weather.core.api.WeatherApi
-import ru.lanik.weatherapp.modules.weather.core.models.WeatherInfo
-import ru.lanik.weatherapp.modules.weather.core.toWeatherInfo
+import ru.lanik.weatherapp.core.Resource
+import ru.lanik.weatherapp.core.api.WeatherApi
+import ru.lanik.weatherapp.core.models.WeatherInfo
+import ru.lanik.weatherapp.core.toWeatherInfo
 import javax.inject.Inject
 
 class WeatherRepository @Inject constructor(

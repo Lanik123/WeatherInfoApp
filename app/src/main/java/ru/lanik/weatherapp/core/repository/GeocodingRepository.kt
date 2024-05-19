@@ -1,11 +1,11 @@
-package ru.lanik.weatherapp.modules.weather.core.repository
+package ru.lanik.weatherapp.core.repository
 
 import android.app.Application
 import ru.lanik.weatherapp.R
-import ru.lanik.weatherapp.modules.weather.core.Resource
-import ru.lanik.weatherapp.modules.weather.core.api.GeocodingApi
-import ru.lanik.weatherapp.modules.weather.core.models.CityData
-import ru.lanik.weatherapp.modules.weather.core.toCityDataList
+import ru.lanik.weatherapp.core.Resource
+import ru.lanik.weatherapp.core.api.GeocodingApi
+import ru.lanik.weatherapp.core.models.CityData
+import ru.lanik.weatherapp.core.toCityDataList
 import javax.inject.Inject
 
 class GeocodingRepository @Inject constructor(

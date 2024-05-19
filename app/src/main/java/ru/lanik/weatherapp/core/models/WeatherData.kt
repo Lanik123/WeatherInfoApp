@@ -1,4 +1,4 @@
-package ru.lanik.weatherapp.modules.weather.core.models
+package ru.lanik.weatherapp.core.models
 
 import java.time.LocalDateTime
 

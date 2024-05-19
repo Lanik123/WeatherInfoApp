@@ -26,8 +26,8 @@ import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
 import retrofit2.create
 import ru.lanik.weatherapp.core.models.LocalDataState
-import ru.lanik.weatherapp.modules.weather.core.api.GeocodingApi
-import ru.lanik.weatherapp.modules.weather.core.api.WeatherApi
+import ru.lanik.weatherapp.core.api.GeocodingApi
+import ru.lanik.weatherapp.core.api.WeatherApi
 import java.io.InputStream
 import java.io.OutputStream
 import javax.inject.Singleton

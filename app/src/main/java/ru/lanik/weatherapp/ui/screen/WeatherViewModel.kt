@@ -1,4 +1,4 @@
-package ru.lanik.weatherapp.modules.weather
+package ru.lanik.weatherapp.ui.screen
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
