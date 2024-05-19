@@ -1,7 +1,13 @@
 package ru.lanik.weatherapp.core
 
+import android.location.Location
+import java.time.LocalDateTime
+
 interface ILocalStorage {
+    var weatherTimestamp: LocalDateTime?
+    val weatherUpdateIntervalMin: Int
     var cityName: String?
-    var cityLat: Double?
-    var cityLon: Double?
+    var countryCode: String?
+    var cityLocation: Location?
+
 }

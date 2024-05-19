@@ -1,5 +1,6 @@
 package ru.lanik.weatherapp.core.managers
 
+import android.location.Location
 import androidx.datastore.core.DataStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -9,6 +10,8 @@ import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.launch
 import ru.lanik.weatherapp.core.ILocalStorage
 import ru.lanik.weatherapp.core.models.LocalDataState
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 class LocalDataManager @Inject constructor(
@@ -33,6 +36,18 @@ class LocalDataManager @Inject constructor(
         localDataState = state
     }
 
+    override var weatherTimestamp: LocalDateTime?
+        get() = LocalDateTime.parse(localDataState.value.weatherTimestamp, DateTimeFormatter.ISO_DATE_TIME)
+        set(value) {
+            writeData(
+                localDataState.value.copy(
+                    weatherTimestamp = value.toString(),
+                ),
+            )
+        }
+    override val weatherUpdateIntervalMin: Int
+        get() = localDataState.value.weatherUpdateIntervalMin
+
     override var cityName: String?
         get() = localDataState.value.cityName
         set(value) {
@@ -42,24 +57,37 @@ class LocalDataManager @Inject constructor(
                 ),
             )
         }
-    override var cityLat: Double?
-        get() = localDataState.value.cityLat
+    override var countryCode: String?
+        get() = localDataState.value.countryCode
         set(value) {
             writeData(
                 localDataState.value.copy(
-                    cityLat = value,
+                    countryCode = value,
                 ),
             )
         }
-    override var cityLon: Double?
-        get() = localDataState.value.cityLon
+    override var cityLocation: Location?
+        get() {
+            val newLocation = createLocationFromCoordinates(localDataState.value.cityLat, localDataState.value.cityLon)
+            return newLocation
+        }
         set(value) {
             writeData(
                 localDataState.value.copy(
-                    cityLon = value,
+                    cityLat = value?.latitude,
+                    cityLon = value?.longitude
                 ),
             )
         }
+
+    private fun createLocationFromCoordinates(latitude: Double?, longitude: Double?): Location? {
+        return if (latitude != null && longitude != null) {
+            Location("manual").apply {
+                this.latitude = latitude
+                this.longitude = longitude
+            }
+        } else null
+    }
 
     private fun writeData(newModel: LocalDataState) {
         localCoroutineScope.launch {
