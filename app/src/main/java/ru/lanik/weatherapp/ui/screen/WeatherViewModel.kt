@@ -32,7 +32,7 @@ class WeatherViewModel @Inject constructor(
                 } else if (it.cityInfo == null && it.weatherInfo == null && !it.permissionStatus) {
                     addError("Not enough permissions for the application to work! Please grant all necessary permissions for the application to work correctly!")
                     changeState(ScreenState.Error)
-                } else {
+                } else if (it.cityInfo == null && it.weatherInfo == null) {
                     changeState(ScreenState.Loading)
                     delay(200L)
                     onCitySync(false)
