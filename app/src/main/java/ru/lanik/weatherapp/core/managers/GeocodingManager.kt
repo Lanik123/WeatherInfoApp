@@ -1,7 +1,6 @@
 package ru.lanik.weatherapp.core.managers
 
 import android.location.Location
-import android.util.Log
 import ru.lanik.weatherapp.core.IGeocodingManager
 import ru.lanik.weatherapp.core.ILocalStorage
 import ru.lanik.weatherapp.core.Resource
@@ -25,16 +24,13 @@ class GeocodingManager @Inject constructor(
 
         newLocation?.let {
             if (forceNew) {
-                Log.e("GeocodingManager", "Force get new geocode")
                 localStorage.cityLocation = newLocation
                 return getCityNameAndCaching(newLocation.latitude, newLocation.longitude)
             } else if (localStorage.cityName != null && localStorage.countryCode != null && localStorage.cityLocation != null) {
                 if (isLocationSignificantChanged(localStorage.cityLocation!!, newLocation)) {
-                    Log.e("GeocodingManager", "LocationSignificantChanged")
                     localStorage.cityLocation = newLocation
                     return getCityNameAndCaching(newLocation.latitude, newLocation.longitude)
                 } else {
-                    Log.e("GeocodingManager", "Get old code")
                     return Resource.Success(
                         data = CityInfo(
                             name = localStorage.cityName!!,
@@ -45,7 +41,6 @@ class GeocodingManager @Inject constructor(
                     )
                 }
             } else {
-                Log.e("GeocodingManager", "Get new code")
                 localStorage.cityLocation = newLocation
                 return getCityNameAndCaching(newLocation.latitude, newLocation.longitude)
             }
