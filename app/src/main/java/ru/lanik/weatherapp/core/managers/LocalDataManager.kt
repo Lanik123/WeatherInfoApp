@@ -8,6 +8,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import ru.lanik.weatherapp.core.ILocalStorage
 import ru.lanik.weatherapp.core.models.LocalDataState
 import java.time.LocalDateTime
@@ -92,7 +93,7 @@ class LocalDataManager @Inject constructor(
     }
 
     private fun writeData(newModel: LocalDataState) {
-        localCoroutineScope.launch {
+        runBlocking {
             localDataStore.updateData { newModel }
         }
     }

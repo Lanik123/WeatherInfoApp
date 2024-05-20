@@ -25,17 +25,4 @@ class WeatherManager @Inject constructor(
             return weatherRepository.getWeatherData(newLocation.latitude, newLocation.longitude)
         } ?: return Resource.Error("Couldn't retrieve weather info. Make sure you grant all permission and enable GPS.")
     }
-
-    /*private fun isLocationSignificantChanged(oldLocation: Location, newLocation: Location): Boolean {
-        val threshold = 0.3
-        val distance = oldLocation.distanceTo(newLocation)
-        return distance > threshold
-    }*/
-
-    /*
-    fun isOldData(timestamp: LocalDateTime, intervalThreshold: Int): Boolean {
-        val now = LocalDateTime.now()
-        val duration = Duration.between(timestamp, now)
-        return duration.toMinutes() >= intervalThreshold
-    }*/
 }

@@ -27,12 +27,12 @@ class GeocodingManager @Inject constructor(
             if (forceNew) {
                 Log.e("GeocodingManager", "Force get new geocode")
                 localStorage.cityLocation = newLocation
-                return geocodingRepository.getCityName(newLocation.latitude, newLocation.longitude)
+                return getCityNameAndCaching(newLocation.latitude, newLocation.longitude)
             } else if (localStorage.cityName != null && localStorage.countryCode != null && localStorage.cityLocation != null) {
                 if (isLocationSignificantChanged(localStorage.cityLocation!!, newLocation)) {
                     Log.e("GeocodingManager", "LocationSignificantChanged")
                     localStorage.cityLocation = newLocation
-                    return geocodingRepository.getCityName(newLocation.latitude, newLocation.longitude)
+                    return getCityNameAndCaching(newLocation.latitude, newLocation.longitude)
                 } else {
                     Log.e("GeocodingManager", "Get old code")
                     return Resource.Success(
@@ -47,9 +47,25 @@ class GeocodingManager @Inject constructor(
             } else {
                 Log.e("GeocodingManager", "Get new code")
                 localStorage.cityLocation = newLocation
-                return geocodingRepository.getCityName(newLocation.latitude, newLocation.longitude)
+                return getCityNameAndCaching(newLocation.latitude, newLocation.longitude)
             }
         } ?: return Resource.Error("Couldn't retrieve location. Make sure you grant all permission and enable GPS.")
+    }
+
+    private suspend fun getCityNameAndCaching(
+        lat: Double,
+        long: Double,
+    ): Resource<CityInfo> {
+        when (val result = geocodingRepository.getCityName(lat, long)) {
+            is Resource.Success -> {
+                localStorage.cityName = result.data?.name
+                localStorage.countryCode = result.data?.country
+                return result
+            }
+            is Resource.Error -> {
+                return result
+            }
+        }
     }
 
     private fun isLocationSignificantChanged(oldLocation: Location, newLocation: Location): Boolean {
