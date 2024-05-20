@@ -24,8 +24,6 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
-import androidx.compose.material3.FabPosition
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
@@ -153,7 +151,7 @@ private fun ErrorScreen(
             Image(
                 painter = painterResource(R.drawable.ic_attention_20),
                 contentDescription = null,
-                modifier = Modifier.size(48.dp)
+                modifier = Modifier.size(48.dp),
             )
             Spacer(Modifier.height(20.dp))
             Text(
@@ -174,8 +172,8 @@ private fun ErrorScreen(
             Button(
                 onClick = { onOpenSettingsClick() },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = WeatherAppTheme.colors.tintColor
-                )
+                    containerColor = WeatherAppTheme.colors.tintColor,
+                ),
             ) {
                 Text(
                     text = stringResource(id = R.string.weather_action_open_settings),
@@ -188,8 +186,8 @@ private fun ErrorScreen(
             Button(
                 onClick = { onRefreshClick() },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = WeatherAppTheme.colors.tintColor
-                )
+                    containerColor = WeatherAppTheme.colors.tintColor,
+                ),
             ) {
                 Text(
                     text = stringResource(id = R.string.weather_action_refresh),
@@ -236,7 +234,7 @@ private fun WeatherScreen(
             ) {
                 SmallFloatingActionButton(
                     containerColor = WeatherAppTheme.colors.tintColor,
-                    onClick = { onRefreshClick() }
+                    onClick = { onRefreshClick() },
                 ) {
                     Icon(
                         imageVector = Icons.Default.Refresh,
@@ -259,7 +257,7 @@ private fun WeatherScreen(
             modifier = Modifier
                 .padding(PaddingValues(16.dp))
                 .fillMaxSize(),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             DailyWeatherInfo(
                 weatherUnits = weatherInfo.weatherUnitsData,
@@ -303,9 +301,11 @@ private fun CurrentWeatherInfo(
             style = WeatherAppTheme.typography.title1,
             color = WeatherAppTheme.colors.primaryText,
         )
-        Box(modifier = Modifier
-            .height(100.dp)
-            .fillMaxWidth()) {
+        Box(
+            modifier = Modifier
+                .height(100.dp)
+                .fillMaxWidth(),
+        ) {
             Image(
                 painter = painterResource(id = currentWeather.weatherType.iconRes),
                 contentDescription = null,
@@ -321,7 +321,6 @@ private fun CurrentWeatherInfo(
                     .fillMaxHeight(0.5f)
                     .align(Alignment.TopStart),
             ) {
-
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -467,24 +466,24 @@ private fun DailyWeatherInfo(
             .border(
                 width = 4.dp,
                 WeatherAppTheme.colors.tintColor,
-                WeatherAppTheme.shapes.cornersStyle
+                WeatherAppTheme.shapes.cornersStyle,
             ),
         contentPadding = PaddingValues(WeatherAppTheme.shapes.generalPadding),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         items(data) {
             val temp = "${it.temperatureMax.toInt()} ${weatherUnits.temperatureUnits}"
-            val dayName = if(it.time == LocalDate.now()) "TODAY" else it.time.dayOfWeek.name.substring(0, 3)
+            val dayName = if (it.time == LocalDate.now()) "TODAY" else it.time.dayOfWeek.name.substring(0, 3)
             DailyWeatherItem(
                 dataName = dayName,
                 icon = painterResource(id = it.weatherType.iconRes),
                 formatTemp = temp,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
             Divider(
                 modifier = Modifier.fillMaxWidth(),
                 thickness = 2.dp,
-                color = WeatherAppTheme.colors.tintColor
+                color = WeatherAppTheme.colors.tintColor,
             )
         }
     }
@@ -566,8 +565,8 @@ private fun PermissionNeededDialog(
                 Button(
                     onClick = onCancelClick,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = WeatherAppTheme.colors.tintColor
-                    )
+                        containerColor = WeatherAppTheme.colors.tintColor,
+                    ),
                 ) {
                     Text(
                         text = stringResource(id = R.string.weather_description_dialog_action_no),
@@ -579,8 +578,8 @@ private fun PermissionNeededDialog(
                 Button(
                     onClick = onOkClick,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = WeatherAppTheme.colors.tintColor
-                    )
+                        containerColor = WeatherAppTheme.colors.tintColor,
+                    ),
                 ) {
                     Text(
                         text = stringResource(id = R.string.weather_description_dialog_action_yes),

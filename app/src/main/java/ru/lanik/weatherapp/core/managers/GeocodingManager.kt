@@ -21,7 +21,7 @@ class GeocodingManager @Inject constructor(
         val newLocation = defaultLocationProvider.getCurrentLocation() ?: localStorage.cityLocation
         val networkState = networkStateProvider.isNetworkAvailable()
 
-        if(!networkState) return Resource.Error("Your network connection is disabled. Please enable it before you start working with the application")
+        if (!networkState) return Resource.Error("Your network connection is disabled. Please enable it before you start working with the application")
 
         newLocation?.let {
             if (forceNew) {
@@ -41,7 +41,7 @@ class GeocodingManager @Inject constructor(
                             country = localStorage.countryCode!!,
                             lat = localStorage.cityLocation!!.latitude,
                             lon = localStorage.cityLocation!!.longitude,
-                        )
+                        ),
                     )
                 }
             } else {

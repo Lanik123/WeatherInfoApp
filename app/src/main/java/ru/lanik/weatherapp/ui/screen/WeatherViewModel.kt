@@ -1,6 +1,5 @@
 package ru.lanik.weatherapp.ui.screen
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,7 +25,7 @@ class WeatherViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             viewState.collect {
-                if(it.cityInfo != null && it.weatherInfo != null) {
+                if (it.cityInfo != null && it.weatherInfo != null) {
                     changeState(ScreenState.ShowForecast)
                 } else if (it.cityInfo == null && it.weatherInfo == null && it.errorMessage.isNotEmpty()) {
                     changeState(ScreenState.Error)
@@ -53,7 +52,7 @@ class WeatherViewModel @Inject constructor(
 
     private fun onWeatherSync(forceUpdate: Boolean) {
         viewModelScope.launch {
-            when(val result = weatherManager.getWeatherInfo(forceUpdate)) {
+            when (val result = weatherManager.getWeatherInfo(forceUpdate)) {
                 is Resource.Success -> {
                     _viewState.value =
                         _viewState.value.copy(
@@ -70,7 +69,7 @@ class WeatherViewModel @Inject constructor(
     private fun onCitySync(forceUpdate: Boolean) {
         viewModelScope.launch {
             delay(200L)
-            when(val result = geocodingManager.getCityInfo(forceUpdate)) {
+            when (val result = geocodingManager.getCityInfo(forceUpdate)) {
                 is Resource.Success -> {
                     _viewState.value =
                         _viewState.value.copy(
@@ -84,7 +83,7 @@ class WeatherViewModel @Inject constructor(
         }
     }
 
-    fun onPermissionStatusChange(status: Boolean ) {
+    fun onPermissionStatusChange(status: Boolean) {
         _viewState.value =
             _viewState.value.copy(
                 permissionStatus = status,
@@ -105,7 +104,7 @@ class WeatherViewModel @Inject constructor(
             if (!_viewState.value.errorMessage.contains(str)) {
                 _viewState.value =
                     _viewState.value.copy(
-                        errorMessage = "${_viewState.value.errorMessage}\n\n\n${str}",
+                        errorMessage = "${_viewState.value.errorMessage}\n\n\n$str",
                     )
             }
         }

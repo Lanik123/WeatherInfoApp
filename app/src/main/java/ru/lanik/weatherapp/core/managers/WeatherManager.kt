@@ -1,6 +1,5 @@
 package ru.lanik.weatherapp.core.managers
 
-import android.location.Location
 import ru.lanik.weatherapp.core.ILocalStorage
 import ru.lanik.weatherapp.core.IWeatherManager
 import ru.lanik.weatherapp.core.Resource
@@ -20,7 +19,7 @@ class WeatherManager @Inject constructor(
         val newLocation = defaultLocationProvider.getCurrentLocation() ?: localStorage.cityLocation
         val networkState = networkStateProvider.isNetworkAvailable()
 
-        if(!networkState) return Resource.Error("Your network connection is disabled. Please enable it before you start working with the application")
+        if (!networkState) return Resource.Error("Your network connection is disabled. Please enable it before you start working with the application")
         newLocation?.let {
             return weatherRepository.getWeatherData(newLocation.latitude, newLocation.longitude)
         } ?: return Resource.Error("Couldn't retrieve weather info. Make sure you grant all permission and enable GPS.")
